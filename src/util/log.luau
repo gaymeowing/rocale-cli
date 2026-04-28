@@ -98,7 +98,7 @@ function log.error(...)
 end
 
 function log.fatal(...): never
-	local prefix =  richterm.red("[FATAL] ", colorsEnabled)
+	local prefix = richterm.red("[FATAL] ", colorsEnabled)
 	local caller = getCallerInfo()
 	print(caller .. " | " .. prefix .. stringifyVararg(...))
 	process.exit(1)

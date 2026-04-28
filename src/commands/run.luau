@@ -102,6 +102,7 @@ return function(...)
 		placeId = tonumber(args:get("placeId")) or log.fatal("Missing a place ID"),
 	}
 
+	--stylua: ignore
 	if
 		(
 			toBoolNum(args:get("load.place"))
