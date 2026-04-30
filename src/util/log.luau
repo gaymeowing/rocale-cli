@@ -35,26 +35,6 @@ function log.should(level: Level)
 	return levels[level] >= levels[currentLevel]
 end
 
--- Get caller information from debug traceback.
-local function getCallerInfo()
-	if not showCaller then
-		return ""
-	end
-	local traceback = debug.traceback()
-	local lines = string.split(traceback, "\n")
-
-	-- Look for the first line that's not in this logger module.
-	for _, line in lines do
-		if line:find("util/log") then
-			continue
-		end
-
-		return line
-	end
-
-	return "[unknown]"
-end
-
 function log.trace(...)
 	if log.should("trace") then
 		local prefix = dimBlueFormatter("[TRACE] ")
@@ -99,8 +79,9 @@ end
 
 function log.fatal(...): never
 	local prefix = richterm.red("[FATAL] ", colorsEnabled)
-	local caller = getCallerInfo()
-	print(caller .. " | " .. prefix .. stringifyVararg(...))
+	local message = prefix .. stringifyVararg(...)
+
+	print(if showCaller then debug.traceback(message, 2) else message)
 	process.exit(1)
 	return nil :: any
 end
