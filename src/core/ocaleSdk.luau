@@ -221,4 +221,4 @@ function OcaleSDK.getTaskLogs(apiKey: string, taskPath: string): { string }
 	return logs
 end
 
-return OcaleSDK
+return table.freeze(OcaleSDK)
