@@ -1,10 +1,9 @@
 local process = require("@lute/process")
-local system = require("@lute/system")
 
-local log = require("../util/log")
+local isWin32 = require("./isWin32")
+local log = require("./log")
 
 return function(cmd: { string })
-	local isWin32 = string.lower(system.os) == "windows_nt"
 	if isWin32 then
 		cmd[1] = cmd[1] .. ".exe"
 	end

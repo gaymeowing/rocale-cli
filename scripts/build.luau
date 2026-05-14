@@ -1,31 +1,37 @@
-local args = { ... }
-local version = args[2] or "unknown"
-local hash = args[3] or "unknown"
-
 local fs = require("@std/fs")
-local system = require("@lute/system")
-
-local log = require("../src/util/log")
-log.setLevel("debug")
 
 local runProcess = require("../src/util/runProcess")
+local isWin32 = require("../src/util/isWin32")
+local log = require("../src/util/log")
+
+local version = select(2, ...) or "unknown"
+local hash = select(3, ...) or "unknown"
+
+log.setLevel("debug")
 
 if not fs.exists("build") then
 	fs.createDirectory("build")
 end
 
-local output_path = "build/rocale-cli"
-if string.lower(system.os) == "windows_nt" then
-	output_path = output_path .. ".exe"
+local outputPath = "build/rocale-cli"
+
+if isWin32 then
+	outputPath ..= ".exe"
 end
 
 log.info("Version: " .. version)
 log.info("Commit Hash: " .. hash)
 
-local versionFile = fs.open("src/version.luau", "w+")
-fs.write(versionFile, `return \{ version="{version}", hash="{hash}" \}`)
-fs.close(versionFile)
+local versionFormat = [[
+local function version()
+	print("%*\\n%*")
+end
+
+return version
+]]
+
+fs.writeStringToFile("src/commands/version.luau", string.format(versionFormat, version, hash))
 
 log.info("Building rocale-cli...")
-runProcess({ "lute", "compile", "src/cli.luau", "--output", output_path, "--show-require-graph", "--bundle-stats" })
-log.info("Build complete: " .. output_path)
+runProcess({ "lute", "compile", "src/cli.luau", "--output", outputPath, "--show-require-graph", "--bundle-stats" })
+log.info("Build complete: " .. outputPath)

@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local TestProject = require(ReplicatedStorage:FindFirstChild("TestProject"))
+-- require is in () to silence the type error that would occur otherwise
+local TestProject = (require)(ReplicatedStorage:FindFirstChild("TestProject"))
 assert(TestProject == true, "TestProject did not return true")
 
 local hello = _G.HELLO_GLOBAL or ""
